@@ -1,0 +1,87 @@
+.dashboard-header {
+  height: 30px;
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+
+.dashboard-container {
+  position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #eee;
+    /* justify-content: space-between; */
+    /* height: 100vh;
+   /* width: 100vw; */
+   overflow: hidden;
+   overflow-x:auto;
+   white-space: nowrap;
+  }
+  
+  /* .tile {
+     /* width: 100%;
+    height: 100%; 
+    margin-left: 20px;
+  } */
+
+/* .tile_slider{
+  width: 100%;
+  height: 100%;
+  /* margin-left: 20px; 
+} */
+svg {
+  font: 10px sans-serif;
+}
+  /* body {
+    overflow: hidcden;
+  } */
+  
+/*   
+  #tile1 {
+    width: 45%;
+    height: calc(50% - 10px);
+  } */
+  
+  /*
+  #tile2 {
+    width: calc(55% - 10px);
+  }
+  
+  #tile3 {
+    width: calc(33.33% - 10px);
+    height : calc(45% - 10px);
+  }
+  
+  #tile4 {
+    width: calc(33.33% - 10px);
+    height: calc(50% - 10px);
+  }
+  
+  #tile5 {
+    width: calc(33.33% - 10px);
+    height: calc(50% - 10px);
+  }
+  */
+  /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
