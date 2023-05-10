@@ -17,12 +17,12 @@ const ScatterPlot = ({ data }) => {
     // create x scale
     const x = d3.scaleLinear()
       .range([0, width])
-      .domain(d3.extent(data, d => +d.y));
+      .domain(d3.extent(data, d => parseFloat(d.y)));
      
     // create y scale
     const y = d3.scaleLinear()
       .range([height, 0])
-      .domain(d3.extent(data, d => +d.x));
+      .domain(d3.extent(data, d => parseFloat(d.x)));
 
     svg.selectAll('circle')
       .data(data)

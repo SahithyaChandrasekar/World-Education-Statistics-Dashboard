@@ -130,10 +130,13 @@ const BarChart = ({data,width,height}) => {
       .attr("width", function(d) {
         return x(data[d]);
       })
+      .attr("stroke", "grey")
       .attr("fill", "#386BB6")
+      .style("opacity","0.3")
+      
 
-      .transition()
-      .duration(1000)
+      //  .transition()
+      //  .duration(1000)
       .attr("height", function(d) {
         return y.bandwidth();
       });

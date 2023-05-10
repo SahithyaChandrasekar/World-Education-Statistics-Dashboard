@@ -111,7 +111,7 @@ var gdpname='GDP Per Capita';
     //var v=dragging[d.name];
     if(d == gdpname)
     {
-    return 620;
+    return 275;
     }
     else{
       return x(d);
