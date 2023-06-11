@@ -26,12 +26,20 @@ function WorldMap({selectCountry}) {
       .append('svg')
       .attr('width', "100%")
       .attr('height', "100%")
-      .attr("viewBox", "350 0 140 395");
+      .attr("viewBox", "300 -30 140 425");
 
     // Add a group to the SVG element for the map
     const map = svg.append('g')
       .attr('class', 'map');
 
+      svg.append("text")
+      .attr("class", "title")
+      .attr("x", width/2)
+      .attr("y", 0)
+      .attr("text-anchor", "middle")
+      .style("font-size", "18px")
+      .style("font-weight", "bold")
+      .text("World Map");
 
     // Load the world map data using D3's built-in function
     //https://d3js.org/world-110m.v1.json
@@ -67,7 +75,7 @@ function WorldMap({selectCountry}) {
           .transition()
           .duration(200)
           .style("opacity", 2)
-          .style("stroke", "black")
+          .style("stroke", "white")
           // .style("fill","orange")
       }
 
@@ -93,11 +101,20 @@ let onClick=function (evnet,d) {
   d3.selectAll(".Country")
           .transition()
           .duration(200)
-          .style("opacity", .5)   
-        d3.select(this)
-          .transition()
-          .duration(200)
+          .style("opacity", 0.25)   
+        if(!d3.select(this).classed("selected")){
+          d3.select(this).classed("selected",true)
+          // .transition()
+          // .duration(200)
           .style("fill", function(d) { if (d!=null) { return (getCountryColor(d.properties['name']));} })
+        
+        } else {
+            d3.select(this).classed("selected", false)
+            // .transition()
+            // .duration(200)
+            .style("stroke", "transparent")
+            .style('fill', '#b8b8b8')
+        }
         tooltip.transition()
           .duration(500)
           .style("opacity", 0);
@@ -112,14 +129,16 @@ let onClick=function (evnet,d) {
         .enter()
         .append('path')
         .attr('class', 'country')
+        .classed("selected",function(d) { return d.properties.name === "India" ?true : false;} )
         .attr('d', path)
         .style('stroke', '#ffffff')
         .style('stroke-width', 0.5)
         //.style("fill", function(selectCountry) { if (selectCountry!=null) { return (getCountryColor(selectCountry.properties['name']));} })
         .style('fill', '#b8b8b8')
+        .style("fill", function(d) { return d.properties.name === "India" ? getCountryColor("India") : "#b8b8b8"; })
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
-        .on("click",onClick);
+        .on("click", onClick);
 
     });
 

@@ -28,7 +28,7 @@ export function PCP({data}) {
     bottom: 20,
     left: 150
   },
-  width = 650 - margin.left - margin.right,
+  width = 800 - margin.left - margin.right,
   height = 400 - margin.top - margin.bottom;
   var dragging = {};
   var line = d3.line();
@@ -65,7 +65,7 @@ export function PCP({data}) {
   var sourceCount_GDP=[],sourceCount_unemp=[];
 
 var gdpname='GDP Per Capita';
-
+var degree = 'Population holding a degree'
 
   useEffect(() => {
     if (data) {
@@ -81,7 +81,7 @@ var gdpname='GDP Per Capita';
               })
             : parsedResponse
                 .map(function(d) {
-                  return d[dimension.name];
+                   return d[dimension.name];
                 })
                 .sort()
         );
@@ -179,24 +179,27 @@ var gdpname='GDP Per Capita';
 
 
      for (let key in state) {
-    if (state[key].hasOwnProperty('Population holding a degree')) {
-      sourceCount_unemp.push(parseInt(state[key]['Population holding a degree']));
+    if (state[key].hasOwnProperty('Degree')) {
+      sourceCount_unemp.push(parseInt(state[key]['Degree']));
     }
    }
    
    for (let key in state) {
-    if (state[key].hasOwnProperty(gdpname)) {
-      sourceCount_GDP.push(parseInt(state[key][gdpname]));
+    if (state[key].hasOwnProperty('Population')) {
+      sourceCount_GDP.push(parseInt(state[key]['Population']));
     }
    }
 
 
 x = d3.scalePoint().domain(
           dimensions.map(function(d) {
-            return d.name;
+              return d.name;
           })).range([0, width]);
 
  y = d3.scaleLinear().domain([0,15]).range([height, 0]);
+
+
+
 
  yunempline=d3.scaleLinear().domain([0,d3.max(sourceCount_unemp, function(d) {
   return d+1;
@@ -209,7 +212,7 @@ x = d3.scalePoint().domain(
         .select(scatterRef.current)
         .attr("width", 768)
         .attr("height", 400)
-        .attr("viewBox", "300 -50 100 450")
+        .attr("viewBox", "260 -80 100 500")
         .append("g")
         // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -231,7 +234,7 @@ x = d3.scalePoint().domain(
           .append("path")
           .attr("d", path)
           .style("stroke", function(d) {
-            // console.log("logging PCP colors", colorsData[d.country]);
+            
             return getCountryColor(d.Country);
           });
 
@@ -242,67 +245,56 @@ x = d3.scalePoint().domain(
           .append("g")
           .attr("class", "dimension")
            .attr("transform", function(d) {
-          // console.log("dimension :");
-          // console.log(d);
-         //return "translate(" + x(d.name) + ")";
-         return  "translate(" + gdptranslate(d.name) + ")";
+                return  "translate(" + gdptranslate(d.name) + ")";
            });
-          // .call(
-          //   d3
-          //     .drag()
-          //     .on("start", function(d) {
-          //       dragging[d.name] =  x(d.name)
-          //       background_lines.attr("visibility", "hidden");
-          //     })
-          //     .on("drag", function(d) {
-          //       dragging[d.name] = Math.min(width, Math.max(0, 100));
-          //       foreground_lines.attr("d", path);
-          //       dimensions.sort(function(a, b) {
-          //         return coordinate(a) - coordinate(b);
-          //       });
-          //       x.domain(
-          //         dimensions.map(function(d) {
-          //           return d.name;
-          //         })
-          //       );
-          //       g.attr("transform", function(d) {
-          //        // return "translate(" + coordinate(d) + ")";
-          //        return "translate(" + coordinate(d)  + ")";
-          //         //return "translate(" + gdptranslate(d) + ")";
-          //       });
-          //     })
-          //     .on("end", function(d) {
-          //       delete dragging[d.name];
-          //       transition(d3.select(this)).attr(
-          //         "transform",
-          //        // gdptranslate(d)
-          //         //"translate(" + coordinate(d) + ")"
-          //         "translate(" + gdptranslate(d.name) + ")"
-          //       );
-          //       transition(foreground_lines).attr("d", path);
-          //       background_lines
-          //         .attr("d", path)
-          //         .transition()
-          //         .delay(500)
-          //         .duration(0)
-          //         .attr("visibility", null);
-          //     })
-          // );
+
+           
+           svg.append("text")
+  .attr("class", "title")
+  .attr("x", width/2)
+  .attr("y", -50)
+  .attr("text-anchor", "middle")
+  .style("font-size", "20px")
+  .style("font-weight", "bold")
+  .style("font-family","  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;")
+  .text("PCP  Plot - Total Population vs Population holding a degree");
 
         g.append("g")
           .attr("class", "axis")
           .each(function(d) {
            if(d.name==="Year" || d.name==="Country")
            {
-           d3.select(this).call(d3.axisLeft(y).scale(d.scale).tickFormat((d, i) => d));
+            d3.select(this).call(d3.axisLeft(y).scale(d.scale).tickFormat((d, i) => d)).style("font-size","12px");
            }
-           else if(d.name === "Population holding a degree")
+           else if(d.name === "Degree")
            {
-            d3.select(this).call(d3.axisLeft(y).scale(yunempline).tickFormat((d, i) => displayValueText(d)));
+            d3.select(this).call(d3.axisLeft(yunempline).tickFormat((d) => {
+              if (d >= 1000000) {
+                return `${d / 1000000}M`;
+              } else if (d >= 1000) {
+                return `${d / 1000}T`;
+              } else {
+                return d;
+              }
+            }))
+            .style("font-size","12px");
            }
-           else if(d.name === gdpname)
+           else if(d.name === "GDP")
            {
             d3.select(this).call(d3.axisLeft(y).scale(ygdpline).tickFormat((d, i) => displayText(d)));
+           }
+           else if(d.name === "Population") {
+            d3.select(this).call(d3.axisLeft(ygdpline).tickFormat((d) => {
+              if (d >= 1000000000) {
+                return `${d / 1000000000}B`;
+              } else if (d >= 1000000) {
+                return `${d / 1000000}M`;
+              } else {
+                return d;
+              }
+            })
+            )
+            .style("font-size","12px");
            }
           })
           .append("text")
@@ -311,10 +303,18 @@ x = d3.scalePoint().domain(
           .attr("y", -19)
           .style("fill", "black")
           .style("font-size", "16px")
-          .style("font-weight", "bold")
+          
           // .style("padding","10px")
           .text(function(d) {
-            return d.name;
+            if(d.name== "Degree"){
+              return "Population holding a degree"
+            }
+            else if(d.name== "Population"){
+              return "Total Population";
+            }
+            else{
+              return d.name
+            }
           });
 
         g.append("g")

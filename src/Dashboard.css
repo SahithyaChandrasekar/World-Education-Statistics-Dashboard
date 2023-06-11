@@ -1,25 +1,24 @@
 .dashboard-header {
-  height: 30px;
-  background-color: black;
-  color: white;
-  font-size: 20px;
+  height: 100;
+  margin-bottom: 2%;
+  margin-top: 1%;
+  color: black;
+  font-size: 25px;
+  /* font-style: italic; */
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  /* font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
   font-weight: bold;
   text-align: center;
-  z-index: 1;
-  position: relative;
 }
-
+.main_body
+{
+  overflow: hidden;
+}
 .dashboard-container {
-  position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #eee;
-    /* justify-content: space-between; */
-    /* height: 100vh;
-   /* width: 100vw; */
-   overflow: hidden;
-   overflow-x:auto;
-   white-space: nowrap;
+ 
+  box-shadow: 0px 0px 10px rgb(171, 163, 9);
+    background-color: rgb(253, 255, 240);
+    padding: px;
   }
   
   /* .tile {

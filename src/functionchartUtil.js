@@ -93,10 +93,10 @@ export const marks = [
   export const colorsData = {
     Afghanistan: "#A165F6",
     Argentina: "#E365F6" ,
-    Australia: "#CDF665",
+    Australia: "#486060",
     Bangladesh: "#06AC0F",
     "South Africa": "#1AC9F5" ,
-    Canada: "#FFD801",
+    Canada: "#9B9A82",
      Malaysia: "#3E88CC",
      Indonesia: "#FA7A54",
      Germany: "#B8F93E",
@@ -158,7 +158,7 @@ export const displayText = (val) => {
   
   export const getYearsData=(range)=>{
     var YearData={marks:[]};
-    for(var j=range[0];j<=range[1];j=j+5)
+    for(var j=1995;j<=range;j=j+5)
   {
     YearData.marks.push({
           "value":j,
@@ -176,14 +176,14 @@ export const getBarChartData = (data,countries,range) => {
   {
     for(var i=0;i<countries.length;i++)
     {
-      var loopfind=data.schooldata.find(c => c.year ==j && c.entity==countries[i]);
+      var loopfind=data.Population.find(c => c.year ==j && c.entity==countries[i]);
    
       if(loopfind!=undefined){countriesmean.push (loopfind);}
     }
    }
 
     for (var i = 0; i < countriesmean.length; i++) {
-      datatoreturn[countriesmean[i]['entity']] = countriesmean[i]['AverageSchooling'];
+      datatoreturn[countriesmean[i]['entity']] = countriesmean[i]['population'];
     }
     //console.log(datatoreturn);
     return datatoreturn;
@@ -238,31 +238,33 @@ for(var i=0;i<countries.length;i++)
  };
 
 
-  export const getPCPdata = (GDPPerCapita,Education,countries, range) => {
+  export const getPCPdata = (Population,Education,countries, range) => {
+    if(countries.length == 0) {
+      countries.push("India");
+    }
     let PCPdata = [];
-    var countriesGDP=[];
+    var countriesPop=[];
     var countriesEdu=[];
     // console.log(countries);
   if(countries===[]){
     return PCPdata;
   }
-  console.log("GDPPERCAPITA",GDPPerCapita)
+  
   for(var i=0;i<countries.length;i++)
   {
   for(var j = range[0]; j <= range[1]; j++)
   {
     
       // var loopmeanaverage=data.schooldata.find(c => c.year ==j && c.entity==countries[i]);
-      var loopGDP=GDPPerCapita.GDPPerCapita.find(c => c.year ==j && c.entity==countries[i]);
+      var loopPop=Population.Population.find(c => c.year ==j && c.entity==countries[i]);
       var loopEdu=Education.Education.find(c => c.year ==j && c.entity==countries[i]);
      // console.log(loopfind);
-      if(loopGDP!=undefined){countriesGDP.push (loopGDP);}
+      if(loopPop!=undefined){countriesPop.push (loopPop);}
       if(loopEdu!=undefined){countriesEdu.push (loopEdu);}
     
    }
  }
-console.log("Selected country unemployemnt data");
-console.log(countriesGDP);
+
  //console.log("Selected countries GDP ");
  //console.log(countriesEdu);
 
@@ -273,8 +275,8 @@ for(var i=0;i<countries.length;i++)
     let obj = {
          "Year": String(j),
          "Country":countries[i],
-         "GDP Per Capita":GDPData(countriesGDP,j,countries[i]),
-         "Population holding a degree":educationData(countriesEdu,j,countries[i]),
+         "Population": PopulationData(countriesPop,j,countries[i]),
+         "Degree":educationData(countriesEdu,j,countries[i]),
          
        };
        PCPdata.push(obj);
@@ -308,6 +310,31 @@ for(var i=0;i<countries.length;i++)
  
  return educationData;
 
+ }
+ export const PopulationData=(countriesPop,range,country)=>{
+
+  var unempdata=0;
+  var getunempratebyprvyear=countriesPop.find(c => c.year ==range && c.entity==country);
+  
+  if(getunempratebyprvyear!=undefined)
+  {
+    unempdata=getunempratebyprvyear['population']; 
+  }
+  if(unempdata==0)
+  { 
+   for(var prevyear=range-1;unempdata==0 && prevyear>range-5;prevyear--){
+   var  getunempratebyprvyear=countriesPop.find(c => c.year == prevyear && c.entity==country)
+   console.log(unempdata)
+    if(getunempratebyprvyear!=undefined)
+    {
+      unempdata=getunempratebyprvyear['population']; 
+     // console.log("Year :" +prevyear +"Country :"+country+" GDP :"+ unempdata);
+    } 
+    }
+   }
+   console.log("population",unempdata);
+    return unempdata;
+   
  }
  export const GDPData=(countriesGDP,range,country)=>{
 

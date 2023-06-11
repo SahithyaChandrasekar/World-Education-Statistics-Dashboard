@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import * as d3 from "d3";
 import Grid from "@mui/material/Grid";
 import Slider from "@mui/material/Slider";
@@ -14,16 +14,16 @@ import {
   getPCPdata,
   valuetext, getYearsData
 } from "./functionchartUtil";
+import { Padding } from "@mui/icons-material";
 
 function Dashboard() {
-  const [countries, setCountries] = React.useState([]);
-  const [schooldata, setData] = React.useState([]);
-  const [GDP, SetGDP] = React.useState([]);
-  const [unempolymentRate, SetUnemployementrate] = React.useState([]);
-  const [rangeValue, setRangeValue] = React.useState([1995, 2020]);
-  const [PCPRangeValue, SetPCPRangeValue] = React.useState([1995, 2020]);
-  const [GDPPerCapita, SetGDPPerCapita] = React.useState([]);
-  const [Education, setEduData] = React.useState([]);
+  const [countries, setCountries] = useState([]);
+  const [schooldata, setData] = useState([]);
+  const [rangeValue, setRangeValue] = useState(2020);
+  const [PCPRangeValue, SetPCPRangeValue] = useState([1995, 2020]);
+  const [GDPPerCapita, SetGDPPerCapita] = useState([]);
+  const [Education, setEduData] = useState([]);
+  const [Population, setPopulationData] = useState([]);
 
   const handleRangeChange = (event, newValue) => {
     setRangeValue(newValue);
@@ -31,28 +31,14 @@ function Dashboard() {
 
   React.useEffect(() => {
     var loadmeanschoolingjson = [];
-    var loadunemployementratejson = [];
-    var loadGDPjson = [];
     var loadGDPpercapitajson = [];
     var loadEdujson = [];
+    var loadPopulationjson=[];
     d3.csv("https://raw.githubusercontent.com/Sucharitha-Inapanuri/CSVDataFiles/main/mean-years-of-schooling-long-run.csv").then((d) => {
       for (var i = 0; i < d.length; i++) {
         loadmeanschoolingjson.push({ "entity": d[i]['Entity'], "year": d[i]['Year'], "AverageSchooling": d[i]['AverageSchooling'] });
       }
       setData(loadmeanschoolingjson);
-    });
-    d3.csv("https://raw.githubusercontent.com/Sucharitha-Inapanuri/CSVDataFiles/main/unemployment-rate.csv").then((d) => {
-      for (var i = 0; i < d.length; i++) {
-        loadunemployementratejson.push({ "entity": d[i]['Entity'], "year": d[i]['Year'], "UnemploymentRate": d[i]['UnemploymentRate'] });
-      }
-      SetUnemployementrate(loadunemployementratejson);
-    });
-
-    d3.csv("https://raw.githubusercontent.com/Sucharitha-Inapanuri/CSVDataFiles/main/total-government-expenditure-on-education-gdp.csv").then((d) => {
-      for (var i = 0; i < d.length; i++) {
-        loadGDPjson.push({ "entity": d[i]['Entity'], "year": d[i]['Year'], "GDP": d[i]['GDP'] });
-      }
-      SetGDP(loadGDPjson);
     });
 
     d3.csv("https://raw.githubusercontent.com/SahithyaChandrasekar/CSVData_VIS/main/GDP.csv").then((d) => {
@@ -62,29 +48,31 @@ function Dashboard() {
       SetGDPPerCapita(loadGDPpercapitajson);
     });
 
-    d3.csv("https://raw.githubusercontent.com/SahithyaChandrasekar/CSVData_VIS/main/totalexp.csv").then((d) => {
-      for (var i = 0; i < d.length; i++) {
-        loadGDPjson.push({ "entity": d[i]['Entity'], "year": d[i]['Year'], "GDP": d[i]['totalexp'] });
-      }
-      SetGDP(loadGDPjson);
-    });
-
     d3.csv("https://raw.githubusercontent.com/SahithyaChandrasekar/CSVData_VIS/main/popl.csv").then((d) => {
+      
       for (var i = 0; i < d.length; i++) {
         loadEdujson.push({ "entity": d[i]['Entity'], "year": d[i]['Year'], "education": d[i]['edu'] });
       }
       setEduData(loadEdujson);
     });
 
+    
+    d3.csv("https://raw.githubusercontent.com/SahithyaChandrasekar/CSVData_VIS/main/Population.csv").then((d) => {
+      for (var i=0; i<d.length; i++){
+        loadPopulationjson.push({"entity":d[i]['Entity'],"year":d[i]['Year'],"population":d[i]['Population']});
+      }
+      setPopulationData(loadPopulationjson);
+    });
+
+
     return () => undefined;
   }, []);
-
   return (
-    <Fragment>
-      <header className="dashboard-header">World Education Statistics</header>
-      <Grid container spacing={1} height="100%">
-        <Grid container item spacing={4} height="380px">
-          <Grid item xs={6} height="inherit" width="inherit">
+    <Fragment >
+       <header className="dashboard-header">World Education Statistics</header>
+      <Grid container height="100%">
+        <Grid container style={{gridGap: "4%"}} row height="350px">
+          <Grid className="dashboard-container"  item xs={5} height="110%" width="100%">
             <WorldMap
               selectCountry={(country) => {
                 setCountries((prevState) => {
@@ -101,37 +89,39 @@ function Dashboard() {
               }
             />
           </Grid>
-          <Grid item xs={6}>
-            <PCP data={getPCPdata({ GDPPerCapita }, { Education }, countries, PCPRangeValue)} />
+          <Grid  className="dashboard-container" item xs={6.5} height="110%" width="100%">
+            <PCP data={getPCPdata({ Population }, { Education }, countries, PCPRangeValue)} />
           </Grid>
         </Grid>
-        <Grid container item spacing={4} height="415px">
-          <Grid item xs={5.5}>
+        <Grid container style={{gridGap: "2%" }} row  height="420px">
+          <Grid item xs={5.3} className="dashboard-container " height="100%" >
             <ScatterPlot
               data={getScatterPlotData(
                 { GDPPerCapita },
                 { Education },
                 countries,
-                rangeValue
+                [1995,rangeValue]
               )} />
           </Grid>
-          <Grid item spacing={1} justifyContent="center">
-            <Slider getAriaLabel={() => "Years range"}
+          <Grid item xs={0.8}  justifyContent="center"  height="100%" >
+            <Slider  getAriaLabel={() => "Years range"}
               value={rangeValue}
+              style= {{height : 300, marginTop: '50px', color:'#77763C'}}
               onChange={handleRangeChange}
               valueLabelFormat={valuetext}
               orientation="vertical"
               marks={getYearsData(rangeValue)}
               min={1995}
+              step = {5}
               max={2020}
             />
           </Grid>
-          <Grid item xs={5.5}>
+          <Grid item xs={5.3} className="dashboard-container" height="100%" >
             <BarChart
               data={getBarChartData(
-                { schooldata },
+                { Population },
                 countries,
-                rangeValue
+                [1995,rangeValue]
               )} />
           </Grid>
         </Grid>
